@@ -10,32 +10,30 @@ contract Swapper {
     AggregatorV3Interface internal priceFeed;
     int public exchangePrice;
     uint96 public decimals;
-    constructor(address feedAddress) {
-        priceFeed = AggregatorV3Interface(feedAddress);
+
+    constructor() {
+        priceFeed = AggregatorV3Interface(0x4746DeC9e833A82EC7C2C1356372CcF2cfcD2F3D);
     }
 
-    function getLatestPrice() public {
+    function getLatestPrice() public view returns (int) {
         (
-        // uint80 roundId,
-        ,int256 price,,,
-        // uint256 startedAt,
-        // uint256 updatedAt,
-        // uint80 answeredInRound
+            ,
+            int price,
+            ,
+            ,
+            
         ) = priceFeed.latestRoundData();
         exchangePrice = price;
-        decimals = priceFeed.decimals();
+        return exchangePrice;
     }
-
-    function viewPrice() view public returns(uint){
-        return uint256(exchangePrice);
-    }
-
+        
+    
 
     function DaiToUsdt (address _fromToken,address _toToken,uint _amountIn) internal{
         uint rate = uint256(exchangePrice)/decimals;
         uint swappedAmount = _amountIn * rate;
         require ( IERC20(_toToken).balanceOf(address(this))>= swappedAmount , "Insufficent funds");
-        require(IERC20(_fromToken).transferFrom(msg.sender, address(this), _amountIn),"");
+        require(IERC20(_fromToken).transferFrom(msg.sender, address(this), _amountIn));
         
     }
 
@@ -44,7 +42,7 @@ contract Swapper {
         uint rate = uint256(exchangePrice)/decimals;
         uint swappedAmount = (_amountIn*100000)/rate;
         require ( IERC20(_toToken).balanceOf(address(this))>= swappedAmount, "Insufficent funds");
-        require(IERC20(_fromToken).transferFrom(msg.sender,address(this), _amountIn),"OGBENI!!!!!");
+        require(IERC20(_fromToken).transferFrom(msg.sender,address(this), _amountIn));
         
     }
 }
